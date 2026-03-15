@@ -1,0 +1,6 @@
+[server]
+headless = true
+
+[runner]
+# Garante que imports relativos funcionem no Windows
+magicEnabled = false
