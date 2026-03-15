@@ -19,7 +19,7 @@ def render_status_cards(df_linha: pd.DataFrame):
     vs1, vs2, vs3 = st.columns(3)
 
     cards = [
-        (vs1, "⛔ Parados",         n_parado, "#ef4444"),
+        (vs1, "⛔ Parados",              n_parado, "#ef4444"),
         (vs2, "🐢 Lentos (&lt;20 km/h)", n_lento,  "#f59e0b"),
         (vs3, "🚀 Rápidos (≥20 km/h)",   n_rapido, "#10b981"),
     ]
@@ -43,12 +43,9 @@ def render_footer(df_raw: pd.DataFrame):
     """Stats grid + GitHub button + theme toggle + credits."""
     st.markdown("---")
 
-    # ── Action buttons ────────────────────────────────────────────────────────
-    btn_col1, btn_col2, _ = st.columns([1, 1, 6])
-    with btn_col1:
-        st.link_button("⬡  GitHub", url="https://github.com/lucaconfente",
-                       width='stretch')
-    with btn_col2:
+    # ── Modo claro/escuro ─────────────────────────────────────────────────────
+    _, btn_col, _ = st.columns([4, 2, 4])
+    with btn_col:
         label = "☀️  Modo Claro" if not st.session_state.light_mode else "🌙  Modo Escuro"
         if st.button(label, width='stretch'):
             st.session_state.light_mode = not st.session_state.light_mode
@@ -89,8 +86,22 @@ def render_footer(df_raw: pd.DataFrame):
   BusTracker · Dados abertos da Mobilidade do Rio de Janeiro ·
   <a href="https://dados.mobilidade.rio" style="color:var(--accent);text-decoration:none;">dados.mobilidade.rio</a>
 </p>
-<p style="text-align:center;font-size:12px;margin:0 0 20px;letter-spacing:1.5px;font-family:'Syne',sans-serif;">
+<p style="text-align:center;font-size:12px;margin:0 0 12px;letter-spacing:1.5px;font-family:'Syne',sans-serif;">
   <span style="color:var(--muted);">Created by</span>
   <span style="color:var(--accent2);font-weight:700;margin-left:6px;">Luca Confente</span>
+</p>
+<p style="text-align:center;margin:0 0 24px;">
+  <a href="https://github.com/lucaconfente"
+     target="_blank"
+     style="display:inline-flex;align-items:center;gap:8px;
+            background:var(--surface2);border:1px solid var(--border);
+            border-radius:10px;padding:8px 20px;
+            font-family:'Syne',sans-serif;font-size:13px;font-weight:700;
+            color:var(--text);text-decoration:none;
+            transition:border-color .2s,box-shadow .2s;"
+     onmouseover="this.style.borderColor='var(--accent)';this.style.boxShadow='var(--glow)'"
+     onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
+    ⬡ &nbsp;GitHub
+  </a>
 </p>
 """, unsafe_allow_html=True)

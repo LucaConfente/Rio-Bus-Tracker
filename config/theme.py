@@ -22,7 +22,7 @@ def get_palette(light_mode: bool) -> dict:
 def inject_css(light_mode: bool):
     p = get_palette(light_mode)
 
-    # ── 1. CSS variables (:root) via f-string ────────────────────────────────
+    # ── 1. CSS variables (:root) ──────────────────────────────────────────────
     st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500&display=swap');
@@ -57,32 +57,8 @@ html, body, [data-testid="stAppViewContainer"] {
     border-right: 1px solid var(--border) !important;
 }
 
-/* ── Esconde toolbar e footer ── */
-[data-testid="stToolbar"] {
-    background: var(--bg) !important;
-    box-shadow: none !important;
-}
-[data-testid="stToolbar"] * {
-    display: none !important;
-}
+/* ── Esconde apenas o footer ── */
 footer { display: none !important; }
-
-/* ── Garante toggle da sidebar visível (cobre todos os seletores do Streamlit 1.x) ── */
-[data-testid="stSidebarCollapsedControl"],
-[data-testid="collapsedControl"],
-[data-testid="stSidebarToggle"],
-[data-testid="stSidebarNavToggle"],
-button[aria-label="Open sidebar"],
-button[aria-label="Close sidebar"],
-button[aria-label="Abrir barra lateral"],
-button[aria-label="Fechar barra lateral"],
-section[data-testid="stSidebar"] + div > button,
-.stSidebarCollapsedControl {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-}
 
 /* ── Sidebar brand ── */
 .brand-block {
