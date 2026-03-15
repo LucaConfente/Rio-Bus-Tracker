@@ -1,9 +1,29 @@
 import streamlit as st
+import requests
 from datetime import datetime, date, timedelta
 
 
+@st.cache_data(ttl=300, show_spinner=False)
+def _get_linhas() -> list:
+    """Busca linhas disponíveis nos últimos 30 minutos para popular o selectbox."""
+    agora = datetime.now()
+    ini   = (agora - timedelta(minutes=30)).strftime("%Y-%m-%d %H:%M:%S")
+    fim   = agora.strftime("%Y-%m-%d %H:%M:%S")
+    try:
+        r = requests.get(
+            "https://dados.mobilidade.rio/gps/sppo",
+            params={"dataInicial": ini, "dataFinal": fim},
+            timeout=15
+        )
+        data = r.json()
+        linhas = sorted(set(item["linha"] for item in data if "linha" in item))
+        return ["(Todas)"] + linhas
+    except Exception:
+        return ["(Todas)"]
+
+
 def render_sidebar() -> dict | None:
-    """Renders the sidebar and returns all filter values as a dict, or None if invalid."""
+    """Renders the sidebar and returns all filter values as a dict, or error dict if invalid."""
     with st.sidebar:
         st.markdown("""
         <div class="brand-block">
@@ -61,7 +81,7 @@ def render_sidebar() -> dict | None:
         if dt_ini >= dt_fim:
             erros.append(("📅", f"Início <b>{data_ini} {hora_ini.strftime('%H:%M')}</b> deve ser menor que Fim <b>{data_fim} {hora_fim.strftime('%H:%M')}</b>."))
         if dt_fim > dt_ini and (dt_fim - dt_ini) > timedelta(hours=1):
-            diff = dt_fim - dt_ini
+            diff    = dt_fim - dt_ini
             minutos = int(diff.total_seconds() // 60)
             erros.append(("⏱", f"Intervalo de <b>{minutos} min</b> excede o máximo de <b>60 min</b>."))
 
@@ -122,16 +142,21 @@ def render_sidebar() -> dict | None:
             .validation-footer {{ margin-top: 4px; }}
             </style>
             """, unsafe_allow_html=True)
-
-            # Retorna os erros para exibir na área principal
             return {"_erros": erros, "_dt_ini_str": dt_ini_str, "_dt_fim_str": dt_fim_str}
 
         # ── Filters ───────────────────────────────────────────────────────────
         st.markdown('<div class="section-title">🚌 Filtros</div>', unsafe_allow_html=True)
-        linha_input = st.text_input("Linha (deixe vazio para todas)", placeholder="Ex: 630")
+
+        with st.spinner("Carregando linhas..."):
+            linhas_disp = _get_linhas()
+
+        linha_sel   = st.selectbox("Linha", linhas_disp)
+        linha_input = "" if linha_sel == "(Todas)" else linha_sel
+
         vel_min, vel_max = st.slider("Faixa de velocidade (km/h)", 0, 120, (0, 120))
         if st.button("⟳  Atualizar Dados", width='stretch'):
             st.cache_data.clear()
+            st.rerun()
 
         # ── Map options ───────────────────────────────────────────────────────
         st.markdown("---")
