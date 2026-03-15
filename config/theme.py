@@ -56,7 +56,33 @@ html, body, [data-testid="stAppViewContainer"] {
     background: var(--surface) !important;
     border-right: 1px solid var(--border) !important;
 }
-[data-testid="stToolbar"], footer { display: none !important; }
+
+/* ── Esconde toolbar e footer ── */
+[data-testid="stToolbar"] {
+    background: var(--bg) !important;
+    box-shadow: none !important;
+}
+[data-testid="stToolbar"] * {
+    display: none !important;
+}
+footer { display: none !important; }
+
+/* ── Garante toggle da sidebar visível (cobre todos os seletores do Streamlit 1.x) ── */
+[data-testid="stSidebarCollapsedControl"],
+[data-testid="collapsedControl"],
+[data-testid="stSidebarToggle"],
+[data-testid="stSidebarNavToggle"],
+button[aria-label="Open sidebar"],
+button[aria-label="Close sidebar"],
+button[aria-label="Abrir barra lateral"],
+button[aria-label="Fechar barra lateral"],
+section[data-testid="stSidebar"] + div > button,
+.stSidebarCollapsedControl {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
 
 /* ── Sidebar brand ── */
 .brand-block {
