@@ -3,7 +3,8 @@ import pandas as pd
 import requests
 
 
-@st.cache_data(ttl=60)
+# Depois — cache por 5 minutos mas respeita os parâmetros
+@st.cache_data(ttl=300, show_spinner=False)
 def fetch_gps(data_inicial: str, data_final: str, linha: str = "") -> pd.DataFrame:
     url = "https://dados.mobilidade.rio/gps/sppo"
     params = {"dataInicial": data_inicial, "dataFinal": data_final}

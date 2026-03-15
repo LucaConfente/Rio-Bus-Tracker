@@ -37,6 +37,46 @@ inject_css(st.session_state.light_mode)
 # ── Sidebar → retorna todos os filtros ───────────────────────────────────────
 opts = render_sidebar()
 
+# ── Exibe erro central se filtros inválidos ───────────────────────────────────
+if opts and "_erros" in opts:
+    erros_html = "".join(
+        f'<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;color:#e2e8f0">'
+        f'<span style="font-size:18px;flex-shrink:0">{icon}</span><span>{msg}</span></div>'
+        for icon, msg in opts["_erros"]
+    )
+    st.markdown(f"""
+    <div style="display:flex;align-items:center;justify-content:center;min-height:60vh;">
+      <div style="background:#080f1e;border:1px solid rgba(239,68,68,0.4);border-radius:24px;
+                  padding:40px 48px;max-width:520px;width:100%;text-align:left;
+                  box-shadow:0 0 40px rgba(239,68,68,0.1);">
+        <div style="font-size:48px;margin-bottom:16px;text-align:center">🚫</div>
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;
+                    color:#ef4444;margin-bottom:6px;text-align:center;letter-spacing:-0.5px;">
+          Filtros Inválidos
+        </div>
+        <div style="font-size:12px;color:#64748b;text-align:center;
+                    letter-spacing:2px;text-transform:uppercase;margin-bottom:28px;">
+          Corrija os erros na barra lateral
+        </div>
+        <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);
+                    border-radius:14px;padding:20px;margin-bottom:20px;">
+          {erros_html}
+        </div>
+        <div style="border-top:1px solid #182540;padding-top:16px;">
+          <div style="font-size:10px;color:#64748b;letter-spacing:2px;
+                      text-transform:uppercase;margin-bottom:12px;">📋 Requisitos</div>
+          <div style="font-size:13px;color:#94a3b8;line-height:2">
+            ✅ &nbsp;Hora início &lt; Hora fim<br>
+            ✅ &nbsp;Nenhuma data/hora no futuro<br>
+            ✅ &nbsp;Intervalo máximo de <b style="color:#e2e8f0">1 hora</b><br>
+            ✅ &nbsp;Intervalo mínimo de <b style="color:#e2e8f0">1 minuto</b>
+          </div>
+        </div>
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
+    st.stop()
+
 # ── Carrega e filtra dados ────────────────────────────────────────────────────
 with st.spinner("Carregando dados GPS..."):
     df_raw = fetch_gps(opts["dt_ini_str"], opts["dt_fim_str"], opts["linha_input"])
