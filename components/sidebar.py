@@ -4,15 +4,12 @@ from datetime import datetime, date, timedelta
 
 
 @st.cache_data(ttl=300, show_spinner=False)
-def _get_linhas() -> list:
-    """Busca linhas disponíveis nos últimos 30 minutos para popular o selectbox."""
-    agora = datetime.now()
-    ini   = (agora - timedelta(minutes=30)).strftime("%Y-%m-%d %H:%M:%S")
-    fim   = agora.strftime("%Y-%m-%d %H:%M:%S")
+def _get_linhas(dt_ini_str: str, dt_fim_str: str) -> list:
+    """Busca linhas disponíveis no período selecionado."""
     try:
         r = requests.get(
             "https://dados.mobilidade.rio/gps/sppo",
-            params={"dataInicial": ini, "dataFinal": fim},
+            params={"dataInicial": dt_ini_str, "dataFinal": dt_fim_str},
             timeout=15
         )
         data = r.json()
@@ -148,7 +145,7 @@ def render_sidebar() -> dict | None:
         st.markdown('<div class="section-title">🚌 Filtros</div>', unsafe_allow_html=True)
 
         with st.spinner("Carregando linhas..."):
-            linhas_disp = _get_linhas()
+            linhas_disp = _get_linhas(dt_ini_str, dt_fim_str)
 
         linha_sel   = st.selectbox("Linha", linhas_disp)
         linha_input = "" if linha_sel == "(Todas)" else linha_sel
