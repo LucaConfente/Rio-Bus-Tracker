@@ -43,14 +43,7 @@ def render_footer(df_raw: pd.DataFrame):
     """Stats grid + GitHub button + theme toggle + credits."""
     st.markdown("---")
 
-    # ── Modo claro/escuro ─────────────────────────────────────────────────────
-    _, btn_col, _ = st.columns([4, 2, 4])
-    with btn_col:
-        label = "☀️  Modo Claro" if not st.session_state.light_mode else "🌙  Modo Escuro"
-        if st.button(label, width='stretch'):
-            st.session_state.light_mode = not st.session_state.light_mode
-            st.rerun()
-
+  
     # ── Stats grid ────────────────────────────────────────────────────────────
     total_reg  = len(df_raw)
     n_veic     = df_raw["ordem"].nunique()
